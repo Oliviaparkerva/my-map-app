@@ -30,6 +30,7 @@ class App extends Component {
 
     axios.get(endPoint + new URLSearchParams(parameters))
       .then(response =>{
+        console.log(response.data)
         this.setState({
           venue: response.data.response.groups[0].items
         })
@@ -45,23 +46,42 @@ class App extends Component {
   /*Creates my map using the latitude and longitude coordinates I provide. Also allows a zoom level. Using the div id map to place my map into my page via React*/
   initMap=()=> {
     var annapolis = {lat: 38.9749, lng: -76.5087};
-
+    //create my map
     var map = new window.google.maps.Map(document.getElementById('map'),{
       center: annapolis,
       zoom: 10/*zoom level for a city 15 gets you street level*/
     })
+    //display my markers by looping over our state and maping it into an array
 
-    var marker = new window.google.maps.Marker({
-      position:annapolis,
-      map:map
+    this.state.venues.map(places=>{
+
+//      var cityCenterMarker = new window.google.maps.Marker({
+//      position:annapolis,
+//      map:map
+//      })
+      var latLng = new window.google.maps.LatLng{(places.venue.location.lat,places.venue.location.lng)}
+      var marker = new window.google.maps.Marker({
+        position:{latLng},
+        map:map,
+        title:places.venue.name
+      })
 
     })
+
 
   }
 
   render() {
     return (
       <main>
+        <div className= "search-bar">
+          <input
+            type="text"
+            placeholder="Search for a location"
+            value={this.state.query}
+            onChange={(event) =>  this.updateQuery(event.target.value)}
+          />
+        </div>
         <div id="map">
         </div>
       </main>
