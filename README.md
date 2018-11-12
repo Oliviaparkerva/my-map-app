@@ -1,3 +1,8 @@
+make sure to put payment information into maps platform so that it runs without limiting your request up to $300 worth of credit in the free trial. it will not charge without persmission after the trial is up
+
+https://is.gd/8mARKL axios documentation used to handle request for my venues
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
