@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
+import SearchBox from "react-google-maps/lib/components/places/SearchBox";
+import { GoogleApiWrapper, InfoWindow, Map, Marker } from 'google-maps-react';
+
 
 class App extends Component {
 
@@ -10,6 +13,7 @@ class App extends Component {
 
   componentDidMount(){
     this.getVenues()
+
   }
 /*call my script that pull from googleapi using my key and access initMap function throught the window document */
   loadMap = () =>{
@@ -32,9 +36,12 @@ class App extends Component {
         this.setState({
           venues: response.data.response.groups[0].items
         },this.loadMap())
+      console.log(this.state.venues[0].venue.name)
     }).catch(error =>{
       console.log("ERROR"+error)
     })
+
+
 
 
   }
@@ -50,17 +57,31 @@ class App extends Component {
       center: annapolis,
       zoom: 10/*zoom level for a city 15 gets you street level*/
     })
+
+
 //makes markers based on venues array
     this.state.venues.map(place =>{
         var coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
 
+        var infowindow = new window.google.maps.InfoWindow ({
+          content:place.venue.name
+        })
+
         var marker = new window.google.maps.Marker({
           position:coordinates,
           map:map,
-          title:place.venue.name,
+//          title:place.venue.name
         })
 
-    })//end of marker method
+        marker.addListener('click',function(){
+          infowindow.open(map,marker);
+        })
+
+
+
+    })
+
+//end of marker method
 
 //makes search box
 
@@ -70,11 +91,11 @@ class App extends Component {
   render() {
     return (
       <main>
-        <div className= "search-bar">
-
-        </div>
+        <div className= "search-bar"></div>
         <div id="map">
+          <infowindow></infowindow>
         </div>
+
       </main>
     )
   }
