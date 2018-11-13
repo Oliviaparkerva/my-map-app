@@ -10,7 +10,6 @@ class App extends Component {
 
   componentDidMount(){
     this.getVenues()
-    this.loadMap()
   }
 /*call my script that pull from googleapi using my key and access initMap function throught the window document */
   loadMap = () =>{
@@ -29,11 +28,10 @@ class App extends Component {
     }
 
     axios.get(endPoint + new URLSearchParams(parameters))
-      .then(response =>{
-        console.log(response.data)
+      .then(response => {
         this.setState({
-          venue: response.data.response.groups[0].items
-        })
+          venues: response.data.response.groups[0].items
+        },this.loadMap())
     }).catch(error =>{
       console.log("ERROR"+error)
     })
@@ -45,42 +43,35 @@ class App extends Component {
 
   /*Creates my map using the latitude and longitude coordinates I provide. Also allows a zoom level. Using the div id map to place my map into my page via React*/
   initMap=()=> {
-    var annapolis = {lat: 38.9749, lng: -76.5087};
-    //create my map
+
+//makes map
+    var annapolis = {lat: 38.9749, lng: -76.5087}
     var map = new window.google.maps.Map(document.getElementById('map'),{
       center: annapolis,
       zoom: 10/*zoom level for a city 15 gets you street level*/
     })
-    //display my markers by looping over our state and maping it into an array
+//makes markers based on venues array
+    this.state.venues.map(place =>{
+        var coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
 
-    this.state.venues.map(places=>{
+        var marker = new window.google.maps.Marker({
+          position:coordinates,
+          map:map,
+          title:place.venue.name,
+        })
 
-//      var cityCenterMarker = new window.google.maps.Marker({
-//      position:annapolis,
-//      map:map
-//      })
-      var latLng = new window.google.maps.LatLng{(places.venue.location.lat,places.venue.location.lng)}
-      var marker = new window.google.maps.Marker({
-        position:{latLng},
-        map:map,
-        title:places.venue.name
-      })
+    })//end of marker method
 
-    })
+//makes search box
 
 
-  }
+  }//end of initMap
 
   render() {
     return (
       <main>
         <div className= "search-bar">
-          <input
-            type="text"
-            placeholder="Search for a location"
-            value={this.state.query}
-            onChange={(event) =>  this.updateQuery(event.target.value)}
-          />
+
         </div>
         <div id="map">
         </div>
@@ -90,9 +81,9 @@ class App extends Component {
 
 }
 
-/*
+        {/*
 Add a script function outside of our react class that creates a script tag and places inside our index.
-*/
+*/}
 
 function loadScript(url){
   var index = window.document.getElementsByTagName("script")[0]
@@ -105,3 +96,11 @@ function loadScript(url){
 
 
 export default App;
+
+        {/*
+        display my markers by looping over our state and maping it into an array
+var cityCenterMarker = new window.google.maps.Marker({
+      position:annapolis,
+      map:map
+      })
+*/}
