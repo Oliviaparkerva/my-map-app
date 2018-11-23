@@ -1,19 +1,30 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
-import Sidebar from './Components/sideBar';
+import Infobar from './Components/InfoBar';
+import Sidebar from "react-sidebar";
+import { Card, CardImg, CardText, CardBody,
+  CardTitle, CardSubtitle, Button } from 'reactstrap';
+import HotSpots from './Components/HotSpots';
+
+
 
 class App extends Component {
-
-   constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       allVenues:[],
       // filteredVenues:[],
       allMarkers:[],
       filteredMarkers:[],
-      query:''
-    }
+      query:'',
+      queryResults:[],
+      sidebarOpen: true
+    };
+    this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+  }
+  onSetSidebarOpen(open) {
+    this.setState({ sidebarOpen: open });
   }
   
   componentDidMount(){
@@ -103,7 +114,32 @@ class App extends Component {
           <header id="header">
             <h2>Annapolis Asian Dining</h2>
           </header>
-          <Sidebar showResults={this.showResults}  query={this.query}/>  
+          <Sidebar 
+            venue={this.props.venue}
+              sidebar={
+                    <div>
+                      <div role="application" id="sidebar">
+                        <label>Filter your Results</label>
+                        <input
+                          aria-label="Venue Filter"
+                          type="text"
+                          placeholder="What are you looking for"
+                          value={this.props.query}
+                          onChange={(event) =>  this.showResults(event.target.value)}/>
+                      </div>
+                      <div className="search-venue-results">
+                        <HotSpots 
+                        />
+                      </div>
+                    </div>
+              }
+            open={this.state.sidebarOpen}
+            onSetOpen={this.onSetSidebarOpen}
+            styles={{ sidebar: { background: "white" , width:"20%"} }}
+          >
+            <button onClick={() => this.onSetSidebarOpen(true)}>Open sidebar</button>
+          
+          </Sidebar>  
         </section>
         <section>
           <div id="map" role="application" aria-label="map"></div>
@@ -138,4 +174,8 @@ var cityCenterMarker = new window.google.maps.Marker({
       })
       //take the allVenues array and map each place get the coordinates of each venue in the array,get the name and address. create markers using maps.Marker add all the markers into empty allMarkers array. add a listener so that when the marker is clicked the infowindow opens use open method for filtering also
       filtering case insensitive data https://is.gd/harTHX
+
+      #map position absolute, overflow hiddne
+
+      sidebar https://is.gd/9uqfbv
 */}
