@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import HotSpots from './HotSpots';
 
-class Infobar extends Component {
+class Sidebar extends Component {
 
   constructor(props){
     super(props);
@@ -14,7 +14,7 @@ class Infobar extends Component {
   
   
   render() {
-    
+    let greeting= 'Welcome to the Jungle';
 
     return (
       <div>
@@ -28,8 +28,7 @@ class Infobar extends Component {
             onChange={(event) =>  this.props.showResults(event.target.value)}/>
         </div>
         <div className="search-venue-results">
-          <HotSpots 
-          />
+          <HotSpots greeting={greeting}/>
         </div>
       </div>
     )
@@ -37,4 +36,4 @@ class Infobar extends Component {
 
 }
 
-export default Infobar;
+export default Sidebar;
