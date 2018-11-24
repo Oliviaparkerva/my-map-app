@@ -7,19 +7,18 @@ class HotSpots extends Component {
       value: null,
     };
   }
+
   render(){
 
-     return(
-
-      <div className="spot">
-        <div className="book-top">
-          <ul>
-            <li>{this.props.greeting}</li>
-            <li>"hi this is a list item'</li>
-          </ul>
-        </div>
+    return(
+      <div>
+      {this.props.filteredVenues && this.props.filteredVenues.map((place) =>(
+      <ol>
+        <li>{place.name}</li>
+        <li>This is a venue list</li>
+      </ol>
+      ))}
       </div>
-
 
     )
   }

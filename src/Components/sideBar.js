@@ -14,7 +14,7 @@ class Sidebar extends Component {
   
   
   render() {
-    let greeting= 'Welcome to the Jungle';
+    let venue= this.props.venue
 
     return (
       <div>
@@ -25,10 +25,16 @@ class Sidebar extends Component {
             type="text"
             placeholder="What are you looking for"
             value={this.props.query}
-            onChange={(event) =>  this.props.showResults(event.target.value)}/>
+            onChange={(event) => this.props.showResults(event.target.value)}
+          />
         </div>
         <div className="search-venue-results">
-          <HotSpots greeting={greeting}/>
+        {this.props.filteredVenues && this.props.filteredVenues.map((place) =>(
+          <HotSpots 
+              filteredVenues={this.props.filteredVenues}
+          />
+          ))
+        }
         </div>
       </div>
     )

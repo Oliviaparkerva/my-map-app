@@ -58,12 +58,12 @@ class App extends Component {
       center: annapolis,
       zoom: 14/*zoom level for a city 15 gets you street level*/
     });
+
     let infowindow = new window.google.maps.InfoWindow();
     let allMarkers =[];
 
-    this.state.allVenues.map(place =>{
+    this.state.allVenues.map((place) =>{
         let coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
-
         let venueInfo= `<h3>${place.venue.name}</h3> <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p>`
 
         let marker = new window.google.maps.Marker({position:coordinates,map:map,id:place.venue.id,name:place.venue.name,category:place.venue.categories[0].shortName
@@ -103,7 +103,12 @@ class App extends Component {
           <header id="header">
             <h2>Annapolis Asian Dining</h2>
           </header>
-          <Sidebar showResults={this.showResults}  query={this.query}/>  
+          <Sidebar 
+          query={this.state.query}
+          showResults={this.showResults} 
+          filteredVenues={this.state.filteredVenues}
+          allMarkers={this.state.allMarkers}
+          />  
         </section>
         <section>
           <div id="map" role="application" aria-label="map"></div>
