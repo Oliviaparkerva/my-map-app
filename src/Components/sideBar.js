@@ -29,12 +29,10 @@ class Sidebar extends Component {
           />
         </div>
         <div className="search-venue-results">
-        {this.props.filteredVenues && this.props.filteredVenues.map((place) =>(
-          <HotSpots 
-              filteredVenues={this.props.filteredVenues}
+          <HotSpots
+            filteredVenues={this.props.filteredVenues}
+
           />
-          ))
-        }
         </div>
       </div>
     )

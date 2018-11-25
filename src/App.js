@@ -12,14 +12,29 @@ class App extends Component {
       // filteredVenues:[],
       allMarkers:[],
       filteredMarkers:[],
-      query:''
+      query:'',
+      selectedItem: null
+
     }
   }
-  
+  componentDidUpdate(){
+    if(this.props.selectedItem){
+      let selectedMarker = this.allMarkers.find(m => {
+        return m.id=== this.props.selectedItem.id;
+      });this.showInfowindow(selectedMarker);
+    }
+  } 
+   showInfowindow = (event, id)=>{
+    let result = this.props.filteredVenues.find(place =>{
+      return place.venue.id===id;
+    })
+    this.setState({"selectedItem":result});
+  } 
   componentDidMount(){
     this.getVenues()
     //dont call a setState here
   }
+
 
 /*call my script that pull from googleapi using my key and access initMap function throught the window document */
   loadMap = () =>{
@@ -75,15 +90,20 @@ class App extends Component {
         marker.addListener('click',() => {
           infowindow.setContent(venueInfo)
           infowindow.open(map,marker)
+          this.showInfowindow(marker);
+          marker.setAnimation(window.google.maps.Animation.BOUNCE)
+          marker.setAnimation(null)
         })
+
     })//end of marker method
+        map.addListener('click', () => {
+        infowindow.close(map)
+        });//close info window when map is clicked
+
+        
   //search method needs to go through all the venues and the markers and filter them if they match the query and then show the results deal with errors like if there is no match
   }//end of initMap
 
-  // updateQuery =(query)=>{
-  //   this.setState({query})
-  //   this.showResults(query)
-  // }
   showResults=(query)=>{
     if(query){
       this.state.filteredMarkers.map((marker)=> marker.setVisible(false));
@@ -93,25 +113,38 @@ class App extends Component {
 
       queryResults.map((marker)=>marker.setVisible(true))
       console.log('these markers match',this.state.filteredVenues)
+    }else{
+
     }
   }
+  showInfowindow = (marker)=>{ 
+          this.infowindow.setContent(marker.title)
+          this.infowindow.open(marker.map, marker)
+        }
 
   render() {
+
     return (
       <main id="App">
         <section>
           <header id="header">
             <h2>Annapolis Asian Dining</h2>
           </header>
+        </section>
+        <section>  
           <Sidebar 
-          query={this.state.query}
+          query={this.query}
           showResults={this.showResults} 
           filteredVenues={this.state.filteredVenues}
           allMarkers={this.state.allMarkers}
           />  
         </section>
-        <section>
-          <div id="map" role="application" aria-label="map"></div>
+        <section id="map-container" >
+          <div 
+          id="map" 
+          role="application" 
+          aria-label="map"
+          selectedItem={this.state.selectedItem}></div>
         </section>
       </main>
     )
@@ -141,6 +174,17 @@ var cityCenterMarker = new window.google.maps.Marker({
       position:annapolis,
       map:map
       })
-      //take the allVenues array and map each place get the coordinates of each venue in the array,get the name and address. create markers using maps.Marker add all the markers into empty allMarkers array. add a listener so that when the marker is clicked the infowindow opens use open method for filtering also
+      //take the allVenues array and map each place get the coordinates of each venue  the array,get the name and address. create markers using maps.Marker add all the markers into empty allMarkers array. add a listener so that when the marker is clicked the infowindow opens use open method for filtering also
       filtering case insensitive data https://is.gd/harTHX
+
+            <div>
+        <ul>
+          {data.map((item, index) => {
+            return <li key={index} onClick={e => this.showInfo(e, item.locationId)}>{item.locationName}</li>;
+          })}
+        </ul>
+
+          <Map center={{ lat: 45.438384, lng: 10.991622 }} zoom={14} data={data} selectedItem={this.state.selectedItem} />
+      </div>
+ 
 */}
