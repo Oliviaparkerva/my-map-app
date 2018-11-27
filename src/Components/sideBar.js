@@ -25,13 +25,14 @@ class Sidebar extends Component {
             type="text"
             placeholder="What are you looking for"
             value={this.props.query}
-            onChange={(event) => this.props.showResults(event.target.value)}
+            onChange={(event) => this.props.showResults(event.target.value)
+            }
           />
         </div>
         <div className="search-venue-results">
           <HotSpots
             filteredVenues={this.props.filteredVenues}
-
+            handleListSelection={this.props.handleListSelection} 
           />
         </div>
       </div>

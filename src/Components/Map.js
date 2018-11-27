@@ -1,4 +1,21 @@
 import React, {Component} from 'react';
-<section id="map-container" >
-  <div id="map" role="application" aria-label="map"></div>
-</section>
+
+class MyMap extends Component{
+
+	constructor(props) {
+        super(props)
+        this.allMarkers = [];
+        this.infoWindow = null;
+    }
+   
+	render(){
+		return(
+			<div id="map-container" >
+	  			<div id="map" role="application" aria-label="map"></div>
+			</div>
+
+		)
+	}
+}
+
+export default MyMap;

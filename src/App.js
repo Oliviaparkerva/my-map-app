@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import Sidebar from './Components/sideBar';
+import Map from './Components/Map';
 
 class App extends Component {
 
@@ -9,32 +10,17 @@ class App extends Component {
     super(props);
     this.state = {
       allVenues:[],
-      // filteredVenues:[],
+      filteredVenues:[],
       allMarkers:[],
-      filteredMarkers:[],
+      // filteredMarkers:[],
       query:'',
-      selectedItem: null
-
     }
   }
-  componentDidUpdate(){
-    if(this.props.selectedItem){
-      let selectedMarker = this.allMarkers.find(m => {
-        return m.id=== this.props.selectedItem.id;
-      });this.showInfowindow(selectedMarker);
-    }
-  } 
-   showInfowindow = (event, id)=>{
-    let result = this.props.filteredVenues.find(place =>{
-      return place.venue.id===id;
-    })
-    this.setState({"selectedItem":result});
-  } 
-  componentDidMount(){
+  
+ componentDidMount(){
     this.getVenues()
     //dont call a setState here
   }
-
 
 /*call my script that pull from googleapi using my key and access initMap function throught the window document */
   loadMap = () =>{
@@ -80,50 +66,52 @@ class App extends Component {
     this.state.allVenues.map((place) =>{
         let coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
         let venueInfo= `<h3>${place.venue.name}</h3> <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p>`
-
         let marker = new window.google.maps.Marker({position:coordinates,map:map,id:place.venue.id,name:place.venue.name,category:place.venue.categories[0].shortName
         })
         allMarkers.push(marker);//add markers to allMarkers array
-        this.setState({filteredMarkers:allMarkers,filteredVenues:allMarkers})
-        console.log('These are all the markers:', this.state.filteredMarkers,this.state.filteredVenues, place.venue.id)
-
-        marker.addListener('click',() => {
-          infowindow.setContent(venueInfo)
-          infowindow.open(map,marker)
-          this.showInfowindow(marker);
-          marker.setAnimation(window.google.maps.Animation.BOUNCE)
-          marker.setAnimation(null)
-        })
-
-    })//end of marker method
+        this.setState({filteredMarkers:allMarkers,filteredVenues:allMarkers});
+        
+        let markerFunction =()=>{
+          marker.addListener('click',() => {
+            infowindow.setContent(venueInfo)
+            infowindow.open(map,marker)
+            marker.setAnimation(window.google.maps.Animation.BOUNCE)
+            marker.setAnimation(null)
+          })
+        }
+        window.google.maps.event.addListener(marker,'click',()=>{
+          markerFunction();
+        });
+    });//end of marker method
         map.addListener('click', () => {
         infowindow.close(map)
         });//close info window when map is clicked
 
-        
+       
   //search method needs to go through all the venues and the markers and filter them if they match the query and then show the results deal with errors like if there is no match
   }//end of initMap
+   handleListSelection=(id) =>{
+    this.state.filteredMarkers.map((marker)=>{
+      if (marker.id=== id){
+        window.google.maps.event.trigger(marker,"click");
+      }
+    })
+  } 
 
   showResults=(query)=>{
     if(query){
       this.state.filteredMarkers.map((marker)=> marker.setVisible(false));
       let queryResults = this.state.filteredMarkers.filter(place => 
           (place.name.toLowerCase().concat(place.category.toLowerCase())).includes(query.toLowerCase()));
-      this.setState({filteredVenues:queryResults,query})
-
-      queryResults.map((marker)=>marker.setVisible(true))
-      console.log('these markers match',this.state.filteredVenues)
-    }else{
-
+      queryResults.map((marker)=>marker.setVisible(true));
+      this.setState({filteredVenues:queryResults,query:query})
+      }else{ 
+        this.setState({filteredVenues:this.state.filteredMarkers,query:""})
+        
     }
   }
-  showInfowindow = (marker)=>{ 
-          this.infowindow.setContent(marker.title)
-          this.infowindow.open(marker.map, marker)
-        }
 
   render() {
-
     return (
       <main id="App">
         <section>
@@ -133,19 +121,21 @@ class App extends Component {
         </section>
         <section>  
           <Sidebar 
-          query={this.query}
-          showResults={this.showResults} 
-          filteredVenues={this.state.filteredVenues}
-          allMarkers={this.state.allMarkers}
+            query={this.query}
+            showResults={this.showResults} 
+            filteredVenues={this.state.filteredVenues}
+            allMarkers={this.state.allMarkers}
+            handleListSelection= {this.handleListSelection}
+            filteredMarkers={this.state.filteredMarkers}
           />  
         </section>
         <section id="map-container" >
-          <div 
-          id="map" 
-          role="application" 
-          aria-label="map"
-          selectedItem={this.state.selectedItem}></div>
+          <Map
+            // handleListSelection= {this.handleListSelection}
+            // filteredVenues={this.state.filteredVenues}
+          />
         </section>
+
       </main>
     )
   }
@@ -176,15 +166,4 @@ var cityCenterMarker = new window.google.maps.Marker({
       })
       //take the allVenues array and map each place get the coordinates of each venue  the array,get the name and address. create markers using maps.Marker add all the markers into empty allMarkers array. add a listener so that when the marker is clicked the infowindow opens use open method for filtering also
       filtering case insensitive data https://is.gd/harTHX
-
-            <div>
-        <ul>
-          {data.map((item, index) => {
-            return <li key={index} onClick={e => this.showInfo(e, item.locationId)}>{item.locationName}</li>;
-          })}
-        </ul>
-
-          <Map center={{ lat: 45.438384, lng: 10.991622 }} zoom={14} data={data} selectedItem={this.state.selectedItem} />
-      </div>
- 
 */}
