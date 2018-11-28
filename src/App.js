@@ -64,38 +64,28 @@ class App extends Component {
     let infowindow = new window.google.maps.InfoWindow();
 
     this.state.allVenues.map((place) =>{
+      let coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
+      let venueInfo= `<h3>${place.venue.name}</h3> <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p>`
+      let marker = new window.google.maps.Marker({position:coordinates,map:map,id:place.venue.id,name:place.venue.name,category:place.venue.categories[0].shortName
+      })
+      let loc=new window.google.maps.LatLng(marker.position.lat(),marker.position.lng());
+      bounds.extend(loc);
 
-        let coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
-        let venueInfo= `<h3>${place.venue.name}</h3> <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p>`
-        let marker = new window.google.maps.Marker({position:coordinates,map:map,id:place.venue.id,name:place.venue.name,category:place.venue.categories[0].shortName
-        })
-        let loc=new window.google.maps.LatLng(marker.position.lat(),marker.position.lng());
-        bounds.extend(loc);
-
-        allMarkers.push(marker);//add markers to allMarkers array
-        this.setState({filteredMarkers:allMarkers,filteredVenues:allMarkers});
-        
-        // let markerFunction =()=>{
-        //   marker.addListener('click',() => {
-        //     infowindow.setContent(venueInfo)
-        //     infowindow.open(map,marker)
-        //     marker.setAnimation(window.google.maps.Animation.BOUNCE)
-        //     marker.setAnimation(null)
-        //   })
-        // } removed because it required two clicks replaced wit addListener below to hand list and marker
-        window.google.maps.event.addListener(marker,'click',()=>{
-          infowindow.setContent(venueInfo)
-            infowindow.open(map,marker)
-            marker.setAnimation(window.google.maps.Animation.BOUNCE)
-            marker.setAnimation(null)
-
-        });
+      allMarkers.push(marker);//add markers to allMarkers array
+      this.setState({filteredMarkers:allMarkers,filteredVenues:allMarkers});
+      
+      window.google.maps.event.addListener(marker,'click',()=>{
+        infowindow.setContent(venueInfo)
+          infowindow.open(map,marker)
+          marker.setAnimation(window.google.maps.Animation.BOUNCE)
+          marker.setAnimation(null)
+      });
     });//end of marker method
-        map.fitBounds(bounds); //# auto-zoom
-map.panToBounds(bounds);     //# auto-center
-        map.addListener('click', () => {
-        infowindow.close(map)
-        });//close info window when map is clicked
+    map.fitBounds(bounds); //# auto-zoom
+    map.panToBounds(bounds); //# auto-center
+    map.addListener('click', () => {
+      infowindow.close(map)
+    });//close info window when map is clicked
 
        
   //search method needs to go through all the venues and the markers and filter them if they match the query and then show the results deal with errors like if there is no match
@@ -126,26 +116,28 @@ map.panToBounds(bounds);     //# auto-center
   render() {
     return (
       <main id="App">
-        <section>
+        <section id="header-section">
           <header id="header">
             <h2>Annapolis Asian Dining</h2>
           </header>
         </section>
-        <section>  
-          <Sidebar id="Sidebar" 
+        <section id="app-content">
+          <div id="sidebar-container">
+            <Sidebar id="Sidebar" 
             query={this.query}
             showResults={this.showResults} 
             filteredVenues={this.state.filteredVenues}
             allMarkers={this.state.allMarkers}
             handleListSelection= {this.handleListSelection}
             filteredMarkers={this.state.filteredMarkers}
-          />  
-        </section>
-        <section id="map-container" >
+            />    
+          </div>  
+          <div id="map-container" >
           <Map
             // handleListSelection= {this.handleListSelection}
             // filteredVenues={this.state.filteredVenues}
           />
+          </div>
         </section>
 
       </main>
