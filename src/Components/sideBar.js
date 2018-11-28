@@ -23,7 +23,7 @@ class Sidebar extends Component {
           <input
             aria-label="Venue Filter"
             type="text"
-            placeholder="What are you looking for"
+            placeholder="Search by Name or Category"
             value={this.props.query}
             onChange={(event) => this.props.showResults(event.target.value)
             }

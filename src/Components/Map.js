@@ -5,7 +5,6 @@ class MyMap extends Component{
 	constructor(props) {
         super(props)
         this.allMarkers = [];
-        this.infoWindow = null;
     }
    
 	render(){

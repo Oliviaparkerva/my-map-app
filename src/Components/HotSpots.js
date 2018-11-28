@@ -13,11 +13,11 @@ class HotSpots extends Component {
 
     return(
       <div>
-        <ul>
+        <ul id="venue-results">
           {this.props.filteredVenues && this.props.filteredVenues.map((place, id) =>{
             return(
-              <li key={id} onClick={event =>this.props.handleListSelection(place.id)}>
-              {place.name}
+              <li key={id} onClick={event =>this.props.handleListSelection(place.id)}><button>
+              {place.name}</button>
               </li>
             )
           })}

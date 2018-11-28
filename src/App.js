@@ -16,9 +16,9 @@ class App extends Component {
       query:'',
     }
   }
-  
  componentDidMount(){
     this.getVenues()
+
     //dont call a setState here
   }
 
@@ -59,30 +59,40 @@ class App extends Component {
       center: annapolis,
       zoom: 14/*zoom level for a city 15 gets you street level*/
     });
-
-    let infowindow = new window.google.maps.InfoWindow();
+    let bounds= new window.google.maps.LatLngBounds();
     let allMarkers =[];
+    let infowindow = new window.google.maps.InfoWindow();
 
     this.state.allVenues.map((place) =>{
+
         let coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
         let venueInfo= `<h3>${place.venue.name}</h3> <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p>`
         let marker = new window.google.maps.Marker({position:coordinates,map:map,id:place.venue.id,name:place.venue.name,category:place.venue.categories[0].shortName
         })
+        let loc=new window.google.maps.LatLng(marker.position.lat(),marker.position.lng());
+        bounds.extend(loc);
+
         allMarkers.push(marker);//add markers to allMarkers array
         this.setState({filteredMarkers:allMarkers,filteredVenues:allMarkers});
         
-        let markerFunction =()=>{
-          marker.addListener('click',() => {
-            infowindow.setContent(venueInfo)
+        // let markerFunction =()=>{
+        //   marker.addListener('click',() => {
+        //     infowindow.setContent(venueInfo)
+        //     infowindow.open(map,marker)
+        //     marker.setAnimation(window.google.maps.Animation.BOUNCE)
+        //     marker.setAnimation(null)
+        //   })
+        // } removed because it required two clicks replaced wit addListener below to hand list and marker
+        window.google.maps.event.addListener(marker,'click',()=>{
+          infowindow.setContent(venueInfo)
             infowindow.open(map,marker)
             marker.setAnimation(window.google.maps.Animation.BOUNCE)
             marker.setAnimation(null)
-          })
-        }
-        window.google.maps.event.addListener(marker,'click',()=>{
-          markerFunction();
+
         });
     });//end of marker method
+        map.fitBounds(bounds); //# auto-zoom
+map.panToBounds(bounds);     //# auto-center
         map.addListener('click', () => {
         infowindow.close(map)
         });//close info window when map is clicked
@@ -99,18 +109,20 @@ class App extends Component {
   } 
 
   showResults=(query)=>{
+
     if(query){
-      this.state.filteredMarkers.map((marker)=> marker.setVisible(false));
+      this.state.filteredMarkers.map((marker)=> marker.setVisible(false));//set all markers to visible
       let queryResults = this.state.filteredMarkers.filter(place => 
-          (place.name.toLowerCase().concat(place.category.toLowerCase())).includes(query.toLowerCase()));
-      queryResults.map((marker)=>marker.setVisible(true));
-      this.setState({filteredVenues:queryResults,query:query})
-      }else{ 
-        this.setState({filteredVenues:this.state.filteredMarkers,query:""})
-        
+          (place.name.toLowerCase().concat(place.category.toLowerCase())).includes(query.toLowerCase()));//if the query includes the name or category filter it into queryResults.
+      queryResults.map((marker)=>
+        marker.setVisible(true));//set queryResults to visible
+      this.setState({filteredVenues:queryResults,query:query});
+    }else{ 
+      this.state.filteredMarkers.map((marker)=>marker.setVisible(true));//if nothings in input show all the markers
+      this.setState({filteredVenues:this.state.filteredMarkers,query:""})
     }
   }
-
+  
   render() {
     return (
       <main id="App">
@@ -120,7 +132,7 @@ class App extends Component {
           </header>
         </section>
         <section>  
-          <Sidebar 
+          <Sidebar id="Sidebar" 
             query={this.query}
             showResults={this.showResults} 
             filteredVenues={this.state.filteredVenues}

@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  display: flex;
 }
 
 .App-logo {
@@ -58,3 +59,10 @@ html, body {
       #map #infowindow-content {
         display: inline;
       }
+
+#venue-results{
+  list-style: none;
+  display: flex;
+  overflow: scroll;
+  flex-wrap: wrap;
+}
