@@ -13,6 +13,7 @@ class MyMap extends Component{
 	  			<div id="map" role="application" aria-label="map"></div>
 			</div>
 
+
 		)
 	}
 }

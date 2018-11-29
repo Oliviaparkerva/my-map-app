@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import Sidebar from './Components/sideBar';
+import ErrorBoundary from './Components/ErrorBoundary';
 import Map from './Components/Map';
 
 class App extends Component {
@@ -41,7 +42,8 @@ class App extends Component {
       .then(response => {
         this.setState({allVenues: response.data.response.groups[0].items},this.loadMap())
          //returns an array of up to 10 restaurants matching query food near annapolis according to foursquare parameters
-    }).catch(error =>{
+    })
+      .catch(error =>{
       console.log("ERROR"+error);
       window.alert("Could not load data from foursquare "+ error);//test by deleting character from parameters
      
@@ -125,12 +127,16 @@ class App extends Component {
             handleListSelection= {this.handleListSelection}
             filteredMarkers={this.state.filteredMarkers}
             />    
-          </div>  
-          <div id="map-container" >
-            <Map/>
           </div>
+          <ErrorBoundary>
+              <div id="map-container" >
+                  <Map/>
+              </div>
+          </ErrorBoundary>    
+
         </section>
       </main>
+
     )
   }//end of render
 }//end of constructor
@@ -146,6 +152,9 @@ function loadScript(url){
   script.async=true
   script.defer=true
   index.parentNode.insertBefore(script,index)
+  script.onerror= function(){
+    alert("Sorry there is an error with loading the map. Check the URL and API key");
+  };
 }
 
 export default App;

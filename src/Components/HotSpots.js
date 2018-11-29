@@ -11,10 +11,10 @@ class HotSpots extends Component {
 
     return(
       <div>
-        <ul id="venue-results">
+        <ul id="venue-results" role="list">
           {this.props.filteredVenues && this.props.filteredVenues.map((place, id) =>{
             return(
-              <li key={id} onClick={event =>this.props.handleListSelection(place.id)}><button>
+              <li aria-labelledby="venue-results" role="list-item" key={id} onClick={event =>this.props.handleListSelection(place.id)}><button role="button">
               {place.name}</button>
               </li>
             )
