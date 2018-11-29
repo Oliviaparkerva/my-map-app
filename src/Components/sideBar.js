@@ -12,16 +12,16 @@ class Sidebar extends Component {
     }
   }
   
-  
   render() {
-    let venue= this.props.venue
 
     return (
       <div>
         <div role="application" id="sidebar">
           <label>Filter your Results</label>
           <input
+            id="input-box"
             aria-label="Venue Filter"
+            size="30"
             type="text"
             placeholder="Search by Name or Category"
             value={this.props.query}

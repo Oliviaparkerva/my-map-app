@@ -12,14 +12,11 @@ class App extends Component {
       allVenues:[],
       filteredVenues:[],
       allMarkers:[],
-      // filteredMarkers:[],
       query:'',
     }
   }
  componentDidMount(){
     this.getVenues()
-
-    //dont call a setState here
   }
 
 /*call my script that pull from googleapi using my key and access initMap function throught the window document */
@@ -31,10 +28,9 @@ class App extends Component {
   getVenues =(query) =>{
     const endPoint = "https://api.foursquare.com/v2/venues/explore?"
     const parameters={
-
       client_id:"GLHBZMDEYLLEB10I1KEDT5MA1ZLMXDTHTULGTL3FN01BJOFI",
       client_secret:"MMZZMCZSG34D3LMGQLY3RLTCTMCPTL2U5TMXX3N5ZULHLGJ3",
-      query: query,
+      query: "query",
       near: "Annapolis,MD",
       v:"20181211",
       limit: 20,
@@ -43,37 +39,38 @@ class App extends Component {
 //fetch from foursquare using endpoint and parameters,check the response, set the state of all venues array to be the group out of response you want,check to make sure you set the state proper, handle an error with console.log explaining what didnt work
     axios.get(endPoint + new URLSearchParams(parameters))
       .then(response => {
-        console.log(response)    //data.response.groups[""0""].items
         this.setState({allVenues: response.data.response.groups[0].items},this.loadMap())
-        console.log('These are all the venues:',this.state.allVenues)
-      //returns an array of up to 10 restaurants matching query asian near annapolis according to foursquare parameters
+         //returns an array of up to 10 restaurants matching query food near annapolis according to foursquare parameters
     }).catch(error =>{
-      console.log("ERROR"+error)
+      console.log("ERROR"+error);
+      window.alert("Could not load data from foursquare "+ error);//test by deleting character from parameters
+     
     })
   }
   /*Creates my map using the latitude and longitude coordinates provided. Also allows a zoom level. Using the div id map to place my map into my page via React this creates infowindows for each venue marker*/
   initMap=()=> {
-//makes map
-    const annapolis = {lat: 38.9749, lng: -76.5000};
+//makes map 
+    const annapolis = {lat: 38.9749, lng: -76.5000};//set city center
     let map = new window.google.maps.Map(document.getElementById('map'),{
       center: annapolis,
-      zoom: 14/*zoom level for a city 15 gets you street level*/
+      zoom: 18/*zoom level for a city 15 gets you major street level*/
     });
-    let bounds= new window.google.maps.LatLngBounds();
-    let allMarkers =[];
-    let infowindow = new window.google.maps.InfoWindow();
-
+    
+    let bounds= new window.google.maps.LatLngBounds();//set bounds for later zoom,pan
+    let allMarkers =[];//empty markers array to populate once marker method is called
+    let infowindow = new window.google.maps.InfoWindow();//create infowindow TODO:replace with popup modal on li click
+    //map through array containing all my venues forEach place make a new marker, assign coordinates,and infoWindow content
     this.state.allVenues.map((place) =>{
       let coordinates =new window.google.maps.LatLng({lat:place.venue.location.lat , lng:place.venue.location.lng})
-      let venueInfo= `<h3>${place.venue.name}</h3> <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p>`
+      let venueInfo= `<h3>${place.venue.name}</h3><h4>${place.venue.categories[0].shortName}</h4 <p>${place.venue.location.address}<br>${place.venue.location.formattedAddress[1]}</p><sub>information sourced via <a href="https://is.gd/MjAPXg">foursquare API</a></sub>`
       let marker = new window.google.maps.Marker({position:coordinates,map:map,id:place.venue.id,name:place.venue.name,category:place.venue.categories[0].shortName
       })
-      let loc=new window.google.maps.LatLng(marker.position.lat(),marker.position.lng());
+      let loc=new window.google.maps.LatLng(marker.position.lat(),marker.position.lng());//used for centering map when new marker is in focus
       bounds.extend(loc);
 
       allMarkers.push(marker);//add markers to allMarkers array
       this.setState({filteredMarkers:allMarkers,filteredVenues:allMarkers});
-      
+      //when marker/venue button is clicked pull up infowindow with content, make it bounce once by call null on animation directly after
       window.google.maps.event.addListener(marker,'click',()=>{
         infowindow.setContent(venueInfo)
           infowindow.open(map,marker)
@@ -86,20 +83,17 @@ class App extends Component {
     map.addListener('click', () => {
       infowindow.close(map)
     });//close info window when map is clicked
-
-       
-  //search method needs to go through all the venues and the markers and filter them if they match the query and then show the results deal with errors like if there is no match
   }//end of initMap
-   handleListSelection=(id) =>{
+  //click handler that matches up the list and the markers so they can both open the infowindow
+  handleListSelection=(id) =>{
     this.state.filteredMarkers.map((marker)=>{
       if (marker.id=== id){
         window.google.maps.event.trigger(marker,"click");
       }
     })
-  } 
-
+  }
+  //if there is a any query at all go through the markers that have been created and forEach marker see if it matches regardless of case https://is.gd/harTHX any content in the category or name of the place(venue) 
   showResults=(query)=>{
-
     if(query){
       this.state.filteredMarkers.map((marker)=> marker.setVisible(false));//set all markers to visible
       let queryResults = this.state.filteredMarkers.filter(place => 
@@ -118,7 +112,7 @@ class App extends Component {
       <main id="App">
         <section id="header-section">
           <header id="header">
-            <h2>Annapolis Asian Dining</h2>
+            <h2> Annapolis Dining </h2>
           </header>
         </section>
         <section id="app-content">
@@ -133,18 +127,13 @@ class App extends Component {
             />    
           </div>  
           <div id="map-container" >
-          <Map
-            // handleListSelection= {this.handleListSelection}
-            // filteredVenues={this.state.filteredVenues}
-          />
+            <Map/>
           </div>
         </section>
-
       </main>
     )
-  }
-
-}
+  }//end of render
+}//end of constructor
 
         {/*
 Add a script function outside of our react class that creates a script tag and places inside our index.
@@ -159,15 +148,4 @@ function loadScript(url){
   index.parentNode.insertBefore(script,index)
 }
 
-
 export default App;
-
-        {/*
-        display my markers by looping over our state and maping it into an array
-var cityCenterMarker = new window.google.maps.Marker({
-      position:annapolis,
-      map:map
-      })
-      //take the allVenues array and map each place get the coordinates of each venue  the array,get the name and address. create markers using maps.Marker add all the markers into empty allMarkers array. add a listener so that when the marker is clicked the infowindow opens use open method for filtering also
-      filtering case insensitive data https://is.gd/harTHX
-*/}

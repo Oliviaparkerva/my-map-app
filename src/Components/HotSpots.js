@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Card, Button, CardTitle, CardText } from 'reactstrap';
 
 class HotSpots extends Component {
   constructor(props) {
@@ -7,7 +6,6 @@ class HotSpots extends Component {
     this.state = {
     };
   }
-
 
   render(){
 
