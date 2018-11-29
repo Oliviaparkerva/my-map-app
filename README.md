@@ -9,7 +9,7 @@ Single page responsive app created using React, Google Maps API(map display), an
 After loading the map user is able to use input box to filter through a list of 20 restaurants available in the area by either name or category(seafood, cafe, bodega ...). User is able to click on restaurants listed to show information attached to map marker. Clicking on the map marker will also show additional information provided via FourSquare about each location. To close an info window either click a different marker or anywhere on the map
 
 ###Running the App
-Clone this repositories master branch
+Clone this repositories master branch https://github.com/Oliviaparkerva/my-map-app.git
 Run npm install
 Run npm start
 
