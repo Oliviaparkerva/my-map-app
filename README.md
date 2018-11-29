@@ -1,9 +1,36 @@
+#FEND REACT MAPS PROJECT
+
+##Overview
+
+Single page responsive app created using React, Google Maps API(map display), and FourSquare API(location info). Allows user to search through restaurants located near the city center of state capitol Annapolis,MD 
+
+##App functionality
+
+After loading the map user is able to use input box to filter through a list of 20 restaurants available in the area by either name or category(seafood, cafe, bodega ...). User is able to click on restaurants listed to show information attached to map marker. Clicking on the map marker will also show additional information provided via FourSquare about each location. To close an info window either click a different marker or anywhere on the map
+
+###Running the App
+Clone this repositories master branch
+Run npm install
+Run npm start
+
+###Additional information
+
 make sure to put payment information into maps platform so that it runs without limiting your request up to $300 worth of credit in the free trial. it will not charge without persmission after the trial is up
 
+https://is.gd/dFnkGO FourSquare Developer API
 https://is.gd/8mARKL axios documentation used to handle request for my venues
+https://is.gd/t8B8B5 making google maps responsive
+
+####Tutorials
+https://is.gd/7wbk7E Playlist of walkthrough resources:
+-Udacity Walkthrough Doug Brown
+-Elharony Walkthrough without using external components explains running script wonderfully
+-Emam Mohammed great explanation of linking list and markers
+-Ryan Waite LONG walkthrough of project
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 
 ## Available Scripts
 
