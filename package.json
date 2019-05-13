@@ -1,6 +1,9 @@
 {
   "name": "my-map-app",
   "version": "0.1.0",
+  "engines": {
+    "node": "10.3.0"
+  }
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
@@ -25,3 +28,4 @@
     "not op_mini all"
   ]
 }
+
